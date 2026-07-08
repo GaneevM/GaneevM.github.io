@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Graphing Calculator</title>
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#11141d;color:white}header{text-align:center;padding:22px}h1{margin:0;font-size:42px}.wrap{max-width:1150px;margin:auto;padding:16px;display:grid;grid-template-columns:280px 1fr;gap:16px}.panel{background:#1d2434;border:1px solid #35415d;border-radius:18px;padding:16px}input,button{border-radius:10px;border:1px solid #43506d;background:#121722;color:white;padding:11px;margin:4px}button{cursor:pointer;background:#62d6ff;color:#07121a;font-weight:800}.keys{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.keys button{margin:0;background:#2c354b;color:white}canvas{width:100%;height:620px;background:#f9fbff;border-radius:18px}.list div{padding:8px;border-bottom:1px solid #35415d}@media(max-width:850px){.wrap{grid-template-columns:1fr}canvas{height:420px}}
+  </style>
+</head>
+<body>
+  <header><h1>📈 Graphing Calculator</h1><p>Type functions like <b>sin(x)</b>, <b>x^2</b>, <b>sqrt(x)</b>, or <b>2x+1</b>.</p></header>
+  <div class="wrap">
+    <aside class="panel">
+      <input id="expr" placeholder="y = x^2" style="width:95%">
+      <div><input id="xmin" value="-10" size="4"><input id="xmax" value="10" size="4"><button id="add">Add</button></div>
+      <div class="keys" id="keys"></div>
+      <h3>Graphs</h3><div class="list" id="list"></div>
+      <button id="clear">Clear all</button>
+    </aside>
+    <main class="panel"><canvas id="c" width="900" height="620"></canvas></main>
+  </div>
+  <script>
+    const c=document.getElementById("c"),ctx=c.getContext("2d"),colors=["#e63946","#277da1","#43aa8b","#f9c74f","#9b5de5","#f3722c"];let graphs=[];
+    const buttons="7 8 9 / ( 4 5 6 * ) 1 2 3 - ^ 0 . + sin cos tan log sqrt exp x".split(" ");
+    keys.innerHTML=buttons.map(b=>`<button>${b}</button>`).join(""); keys.onclick=e=>{if(e.target.tagName==="BUTTON")expr.value+=e.target.textContent};
+    function jsExpr(s){return s.replace(/\^/g,"**").replace(/(\d)(x)/g,"$1*x").replace(/(x)(\d)/g,"x*$2").replace(/\b(sin|cos|tan|log|sqrt|exp)\(/g,"Math.$1(");}
+    function f(s,x){return Function("x",`return ${jsExpr(s)}`)(x)}
+    function draw(){
+      const W=c.width,H=c.height,x0=+xmin.value||-10,x1=+xmax.value||10,y0=-10,y1=10;ctx.clearRect(0,0,W,H);ctx.fillStyle="#fbfdff";ctx.fillRect(0,0,W,H);
+      const X=x=>(x-x0)/(x1-x0)*W,Y=y=>H-(y-y0)/(y1-y0)*H;ctx.strokeStyle="#d9deea";ctx.lineWidth=1;ctx.font="12px Arial";ctx.fillStyle="#596070";
+      for(let i=Math.ceil(x0);i<=x1;i++){ctx.beginPath();ctx.moveTo(X(i),0);ctx.lineTo(X(i),H);ctx.stroke()}for(let i=y0;i<=y1;i++){ctx.beginPath();ctx.moveTo(0,Y(i));ctx.lineTo(W,Y(i));ctx.stroke()}
+      ctx.strokeStyle="#202637";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(X(0),0);ctx.lineTo(X(0),H);ctx.moveTo(0,Y(0));ctx.lineTo(W,Y(0));ctx.stroke();
+      graphs.forEach((g,idx)=>{ctx.strokeStyle=g.color;ctx.lineWidth=3;ctx.beginPath();let started=false;for(let px=0;px<W;px++){let x=x0+px/W*(x1-x0),y;try{y=f(g.expr,x)}catch{continue}if(!isFinite(y)||Math.abs(y)>1e4){started=false;continue}let py=Y(y);if(!started){ctx.moveTo(px,py);started=true}else ctx.lineTo(px,py)}ctx.stroke()});
+    }
+    add.onclick=()=>{if(!expr.value.trim())return;try{f(expr.value,1)}catch{alert("I couldn't understand that function.");return}graphs.push({expr:expr.value.trim(),color:colors[graphs.length%colors.length]});expr.value="";renderList();draw()};
+    clear.onclick=()=>{graphs=[];renderList();draw()}; expr.onkeydown=e=>{if(e.key==="Enter")add.click()}; xmin.onchange=xmax.onchange=draw;
+    function renderList(){list.innerHTML=graphs.map((g,i)=>`<div style="color:${g.color}">y = ${g.expr}</div>`).join("")}draw();
+  </script>
+</body>
+</html>

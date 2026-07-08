@@ -1,77 +1,25 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Ganeev's Projects</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ganeev's Web Projects</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #10131a;
-      color: white;
-      text-align: center;
-      padding: 60px;
-    }
-
-    h1 {
-      font-size: 48px;
-    }
-
-    .card {
-      background: #1c2230;
-      padding: 25px;
-      margin: 20px auto;
-      max-width: 500px;
-      border-radius: 15px;
-      border: 1px solid #333c52;
-    }
-
-    a {
-      color: #70d6ff;
-      font-size: 24px;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
+    body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#263658,#10131a 60%);color:white;min-height:100vh;text-align:center;padding:55px 18px}
+    h1{font-size:clamp(38px,7vw,72px);margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:1050px;margin:38px auto}
+    .card{background:#1d2434;border:1px solid #3b4660;border-radius:20px;padding:24px;box-shadow:0 18px 45px #0006}.card h2{margin-top:0}.card p{color:#b7c1d9;min-height:44px}
+    a{display:inline-block;margin-top:8px;color:#061018;background:#65e2ff;padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:900}
   </style>
 </head>
 <body>
-  <h1>Ganeev's Projects</h1>
-  <p>Games, apps, and experiments I’ve made.</p>
-
-  <div class="card">
-    <h2>Zero Signal</h2>
-    <p>A browser FPS game.</p>
-    <a href="https://ganeevm.github.io/Zero-Signal/">Play Zero Signal</a>
+  <h1>Ganeev's Web Projects</h1>
+  <p>Playable browser versions of my Python projects.</p>
+  <div class="grid">
+    <section class="card"><h2>Chem Lab Alchemy</h2><p>Combine elements and unlock discoveries.</p><a href="alchemy/">Play</a></section>
+    <section class="card"><h2>Battle Bot Simulator</h2><p>Build a robot and fight the arena AI.</p><a href="battle-bot-simulator/">Play</a></section>
+    <section class="card"><h2>Circuit Simulator</h2><p>Place wires, batteries, bulbs, and resistors.</p><a href="circuit-simulator/">Open</a></section>
+    <section class="card"><h2>Graphing Calculator</h2><p>Plot equations directly in the browser.</p><a href="graphing-calculator/">Open</a></section>
+    <section class="card"><h2>Pandemic Simulator</h2><p>Watch infection spread between cities.</p><a href="pandemic-simulator/">Run</a></section>
   </div>
 </body>
 </html>
-<div class="card">
-  <h2>Alchemy</h2>
-  <p>A Python alchemy game/project.</p>
-  <a href="https://github.com/GaneevM/My-projects/blob/main/alchemy.py">View Project</a>
-</div>
-
-<div class="card">
-  <h2>Battle Bot Simulator</h2>
-  <p>A Python battle bot simulation.</p>
-  <a href="https://github.com/GaneevM/My-projects/blob/main/battlebotsim.py">View Project</a>
-</div>
-
-<div class="card">
-  <h2>Circuit Simulator</h2>
-  <p>A Python circuit simulation project.</p>
-  <a href="https://github.com/GaneevM/My-projects/blob/main/circuitsim.py">View Project</a>
-</div>
-
-<div class="card">
-  <h2>Graphing Calculator</h2>
-  <p>A Python graphing calculator project.</p>
-  <a href="https://github.com/GaneevM/My-projects/blob/main/graphingcalculator.py">View Project</a>
-</div>
-
-<div class="card">
-  <h2>Pandemic Simulator</h2>
-  <p>A Python pandemic simulation project.</p>
-  <a href="https://github.com/GaneevM/My-projects/blob/main/pandemicsim.py">View Project</a>
-</div>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chem Lab Alchemy</title>
+  <style>
+    :root{color-scheme:dark;--bg:#11131a;--panel:#1b2030;--card:#242b3d;--line:#3b4663;--text:#f4f7ff;--muted:#aab4cc;--accent:#62d6ff;--good:#77ffb0;--bad:#ff7285}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top,#1f2b45,#10131a 55%);color:var(--text);min-height:100vh}
+    header{padding:28px 20px;text-align:center}h1{margin:0;font-size:clamp(34px,6vw,64px)}p{color:var(--muted)}main{max-width:1180px;margin:0 auto;padding:0 18px 40px;display:grid;grid-template-columns:340px 1fr 280px;gap:18px}
+    .panel{background:rgba(27,32,48,.88);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 18px 45px #0007}
+    .elements{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.el,.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:14px;padding:12px 8px;cursor:pointer;transition:.15s transform,.15s border-color}.el:hover,.chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+    .el b{display:block;font-size:22px}.el span{font-size:11px;color:var(--muted)}.lab{min-height:420px;display:flex;flex-direction:column;gap:14px}.slots{display:grid;grid-template-columns:1fr 1fr;gap:14px}.slot{height:140px;border:2px dashed var(--line);border-radius:20px;display:grid;place-items:center;background:#111827;color:var(--muted);font-size:20px}
+    .slot.filled{border-style:solid;color:var(--text);background:linear-gradient(145deg,#24324d,#151b29)}.actions{display:flex;gap:10px;flex-wrap:wrap}button{border:0;border-radius:13px;padding:12px 16px;font-weight:800;background:var(--accent);color:#07121a;cursor:pointer}button.secondary{background:#30394f;color:var(--text)}
+    #result{min-height:70px;font-size:22px}.inventory{display:flex;flex-wrap:wrap;gap:8px}.chip{font-size:13px;padding:9px 11px}.goal{font-size:18px;color:var(--good)}.log{max-height:240px;overflow:auto;font-size:14px;color:var(--muted);line-height:1.45}
+    @media(max-width:900px){main{grid-template-columns:1fr}.slot{height:110px}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧪 Chem Lab Alchemy</h1>
+    <p>Pick two discoveries, combine them, and unlock stranger creations.</p>
+  </header>
+  <main>
+    <section class="panel">
+      <h2>Elements</h2>
+      <div class="elements" id="elements"></div>
+    </section>
+    <section class="panel lab">
+      <h2>Workbench</h2>
+      <div class="slots">
+        <div class="slot" id="slotA">Choose item A</div>
+        <div class="slot" id="slotB">Choose item B</div>
+      </div>
+      <div class="actions">
+        <button id="mix">Combine</button>
+        <button class="secondary" id="clear">Clear</button>
+        <button class="secondary" id="hint">Hint</button>
+      </div>
+      <div id="result"></div>
+      <p class="goal" id="goal"></p>
+    </section>
+    <section class="panel">
+      <h2>Discovered</h2>
+      <div class="inventory" id="inventory"></div>
+      <h3>Lab Notes</h3>
+      <div class="log" id="log"></div>
+    </section>
+  </main>
+  <script>
+    const base=["Hydrogen","Oxygen","Carbon","Iron","Fire","Water","Earth","Air"];
+    const recipes={
+      "Hydrogen+Oxygen":"Water","Fire+Earth":"Lava","Water+Earth":"Mud","Air+Fire":"Energy","Iron+Fire":"Steel","Carbon+Iron":"Alloy","Carbon+Fire":"Smoke","Air+Water":"Cloud","Cloud+Energy":"Storm","Water+Energy":"Steam","Mud+Fire":"Brick","Steel+Energy":"Machine","Machine+Energy":"Robot","Storm+Machine":"Generator","Lava+Water":"Stone","Stone+Fire":"Metal Ore","Metal Ore+Fire":"Iron","Robot+Energy":"Android","Android+Storm":"AI Core","AI Core+Machine":"Factory","Factory+Robot":"Automation","Automation+Energy":"Future Tech"
+    };
+    const goals=["Steel","Robot","Generator","AI Core","Future Tech"];
+    let known=new Set(JSON.parse(localStorage.chemKnown||"null")||base), a=null,b=null, goal=goals.find(g=>!known.has(g))||"Future Tech";
+    const key=(x,y)=>[x,y].sort().join("+"), $=id=>document.getElementById(id);
+    function render(){
+      $("elements").innerHTML=base.map(n=>`<button class="el" data-v="${n}"><b>${n[0]}</b><span>${n}</span></button>`).join("");
+      $("inventory").innerHTML=[...known].sort().map(n=>`<button class="chip" data-v="${n}">${n}</button>`).join("");
+      $("slotA").textContent=a||"Choose item A"; $("slotB").textContent=b||"Choose item B";
+      $("slotA").classList.toggle("filled",!!a); $("slotB").classList.toggle("filled",!!b);
+      goal=goals.find(g=>!known.has(g))||"All main goals complete!";
+      $("goal").textContent=goal.includes("complete")?goal:`Current goal: discover ${goal}`;
+      document.querySelectorAll("[data-v]").forEach(x=>x.onclick=()=>pick(x.dataset.v));
+    }
+    function pick(v){ if(!a)a=v; else if(!b)b=v; else{a=v;b=null} render(); }
+    function note(t){ $("log").innerHTML=`<div>${new Date().toLocaleTimeString()} — ${t}</div>`+$("log").innerHTML; }
+    $("mix").onclick=()=>{ if(!a||!b)return; const made=recipes[key(a,b)]; if(made){ const fresh=!known.has(made); known.add(made); localStorage.chemKnown=JSON.stringify([...known]); $("result").innerHTML=`${fresh?"New discovery":"Already known"}: <b>${made}</b>`; note(`${a} + ${b} → ${made}`); } else { $("result").innerHTML=`<span style="color:var(--bad)">No reaction.</span>`; note(`${a} + ${b} fizzled out`); } a=b=null; render(); };
+    $("clear").onclick=()=>{a=b=null;render();$("result").textContent=""};
+    $("hint").onclick=()=>{ const missing=Object.entries(recipes).find(([,v])=>!known.has(v)); $("result").textContent=missing?`Hint: try ingredients that could make ${missing[1]}.`:"You found every recipe in this version."; };
+    render(); note("Lab online. Start combining.");
+  </script>
+</body>
+</html>
