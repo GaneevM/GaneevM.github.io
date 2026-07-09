@@ -21,12 +21,13 @@ const cats=[
   {name:"Symptoms",parts:[["Silent Fever","+ hard to detect","low danger",{stealth:.35,death:-.01}],["Burning Cough","+ very infectious","detected faster",{spread:.25,stealth:-.05}],["Organ Shock","+ high danger","slower spread",{death:.04,spread:-.08}]]},
   {name:"Resistance",parts:[["Heat Shell","+ survives hot climates","costly",{spread:.08}],["Drug Resistant","+ harder to cure","public reacts",{recovery:-.02,stealth:-.05}],["Fast Mutation","+ adapts quickly","unstable",{spread:.20,death:.01,recovery:.01}]]}
 ];
+function geo(lon,lat){return [map.x+(lon+180)/360*map.w,map.y+(90-lat)/180*map.h]}
 const countries=[
- ["Canada",190,156,38000,true],["United States",238,218,331000,true],["Mexico",230,302,128000,true],["Brazil",350,434,214000,true],["Argentina",326,552,45000,true],
- ["United Kingdom",456,176,67000,true],["France",496,222,65000,true],["Spain",472,258,47000,true],["Germany",520,202,83000,false],["Turkey",580,254,85000,true],
- ["Russia",665,158,144000,true],["Egypt",558,322,104000,true],["Nigeria",506,390,213000,true],["South Africa",548,560,60000,true],["Saudi Arabia",622,326,36000,true],
- ["India",704,330,1400000,true],["China",790,266,1410000,true],["Japan",895,270,125000,true],["Indonesia",782,438,276000,true],["Australia",835,540,26000,true]
-].map((c,i)=>({id:i,name:c[0],x:c[1],y:c[2],pop:c[3],coastal:c[4]}));
+ ["Canada",-106,56,38000,true],["United States",-98,39,331000,true],["Mexico",-102,23,128000,true],["Brazil",-52,-10,214000,true],["Argentina",-64,-34,45000,true],
+ ["United Kingdom",-2,54,67000,true],["France",2,46,65000,true],["Spain",-4,40,47000,true],["Germany",10,51,83000,false],["Turkey",35,39,85000,true],
+ ["Russia",95,61,144000,true],["Egypt",30,27,104000,true],["Nigeria",8,9,213000,true],["South Africa",24,-29,60000,true],["Saudi Arabia",45,24,36000,true],
+ ["India",78,22,1400000,true],["China",104,35,1410000,true],["Japan",138,37,125000,true],["Indonesia",114,-2,276000,true],["Australia",134,-25,26000,true]
+].map((c,i)=>{let p=geo(c[1],c[2]);return{id:i,name:c[0],x:p[0],y:p[1],pop:c[3],coastal:c[4]}});
 function base(){return{spread:.22,death:.018,recovery:.055,travel:.24,boat:.18,stealth:.10}}
 function params(){let p=base();selected.forEach((s,i)=>{if(s==null)return;let m=cats[i].parts[s][3];Object.keys(m).forEach(k=>p[k]=(p[k]||0)+m[k])});p.spread=Math.max(.02,p.spread);p.recovery=Math.max(.01,p.recovery);return p}
 function round(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
@@ -55,21 +56,22 @@ function config(){g.fillStyle=BG;g.fillRect(0,0,W,H);g.fillStyle=WHITE;g.font="4
   countries.slice(10,20).forEach((c,i)=>{button(1070,212+i*31,130,25,c.name,startName===c.name?ACCENT:PANEL2,startName===c.name?"#071018":WHITE);buttons[buttons.length-1].country=c.name});
   button(930,548,130,34,"Flights",flights?GREEN:PANEL2,flights?"#071018":WHITE);button(1070,548,130,34,"Boats",boats?GREEN:PANEL2,boats?"#071018":WHITE);button(920,622,290,48,"Start simulation",selected.every(v=>v!=null)?GREEN:"#43506a",selected.every(v=>v!=null)?"#071018":MUTED)}
 function land(points,fill="#173a52"){g.beginPath();points.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fillStyle=fill;g.fill();g.strokeStyle="#6f8bad";g.lineWidth=1.2;g.stroke()}
-function blob(x,y,rx,ry,rot=0,fill="#173a52"){g.save();g.translate(x,y);g.rotate(rot);g.fillStyle=fill;g.strokeStyle="#6f8bad";g.lineWidth=1.1;g.beginPath();g.ellipse(0,0,rx,ry,0,0,Math.PI*2);g.fill();g.stroke();g.restore()}
-function island(x,y,r){g.fillStyle="#173a52";g.strokeStyle="#6f8bad";g.lineWidth=1;g.beginPath();g.arc(x,y,r,0,7);g.fill();g.stroke()}
+function landLL(points,fill="#173a52"){land(points.map(p=>geo(p[0],p[1])),fill)}
+function islandLL(lon,lat,r){let p=geo(lon,lat);g.fillStyle="#173a52";g.strokeStyle="#6f8bad";g.lineWidth=1;g.beginPath();g.arc(p[0],p[1],r,0,7);g.fill();g.stroke()}
 function worldMap(){
   let grd=g.createLinearGradient(map.x,map.y,map.x+map.w,map.y+map.h);grd.addColorStop(0,"#0a2039");grd.addColorStop(1,"#09101e");g.fillStyle=grd;round(map.x,map.y,map.w,map.h,16);g.fill();g.strokeStyle="#405c7b";g.lineWidth=2;g.stroke();
   for(let x=80;x<830;x+=75){g.strokeStyle="rgba(160,190,220,.07)";g.lineWidth=1;g.beginPath();g.moveTo(x,126);g.lineTo(x,632);g.stroke()}for(let y=146;y<630;y+=62){g.beginPath();g.moveTo(54,y);g.lineTo(834,y);g.stroke()}
-  g.globalAlpha=.92;
-  blob(178,215,92,88,-.18,"#173a52");blob(228,212,66,72,.35,"#173a52");blob(244,440,58,150,-.08,"#1a4058");
-  blob(515,205,122,74,.05,"#173a52");blob(640,210,150,58,.14,"#173a52");blob(518,370,72,116,-.05,"#1b465d");
-  blob(705,312,116,86,.05,"#173a52");blob(793,330,96,78,.35,"#173a52");blob(820,540,82,56,.08,"#1d4b61");blob(596,568,58,72,-.12,"#173d59");
-  g.globalAlpha=1;
-  land([[85,170],[110,140],[170,130],[232,150],[275,196],[260,242],[288,270],[250,302],[208,292],[172,322],[128,306],[94,276],[78,230]],"rgba(24,58,82,.55)");
-  land([[392,176],[430,146],[496,140],[548,156],[612,148],[690,172],[760,220],[742,260],[668,256],[614,296],[540,272],[486,290],[426,256],[392,218]],"rgba(24,58,82,.55)");
-  land([[604,278],[674,244],[746,248],[820,290],[836,338],[806,388],[730,384],[662,344]],"rgba(24,58,82,.52)");
-  island(432,188,9);island(462,198,7);island(858,254,7);island(708,432,7);island(720,448,5);
-  g.strokeStyle="rgba(240,248,255,.10)";g.lineWidth=1;[[[265,302],[392,260]],[[560,298],[604,278]],[[730,384],[820,540]],[[515,205],[518,370]],[[228,302],[244,440]]].forEach(seg=>{g.beginPath();g.moveTo(seg[0][0],seg[0][1]);g.lineTo(seg[1][0],seg[1][1]);g.stroke()});
+  landLL([[-168,72],[-138,70],[-112,73],[-86,65],[-60,58],[-52,48],[-78,31],[-96,24],[-112,29],[-126,43],[-143,55],[-166,60]],"#173a52");
+  landLL([[-82,12],[-66,3],[-58,-12],[-62,-28],[-70,-44],[-76,-55],[-66,-55],[-50,-38],[-42,-20],[-44,-6],[-54,5],[-68,10]],"#1a4058");
+  landLL([[-10,72],[20,70],[45,66],[78,70],[112,66],[145,58],[170,48],[154,36],[120,30],[92,22],[72,8],[48,18],[32,35],[10,42],[-8,54]],"#173a52");
+  landLL([[-18,35],[2,35],[22,30],[34,12],[30,-10],[22,-28],[12,-34],[-2,-30],[-12,-12],[-18,10]],"#1b465d");
+  landLL([[36,32],[58,32],[78,24],[96,20],[112,28],[124,42],[110,50],[82,48],[58,42],[42,38]],"#173a52");
+  landLL([[78,24],[100,12],[122,8],[144,18],[148,34],[124,42],[104,34],[88,30]],"#173a52");
+  landLL([[112,-10],[130,-6],[146,-20],[134,-38],[112,-36],[100,-24]],"#1d4b61");
+  landLL([[116,-22],[146,-24],[154,-38],[140,-44],[116,-40]],"#1d4b61");
+  landLL([[18,-34],[36,-36],[50,-48],[36,-60],[18,-55],[10,-44]],"#173d59");
+  islandLL(-42,73,12);islandLL(-4,55,6);islandLL(138,37,5);islandLL(114,-2,5);islandLL(48,-19,5);islandLL(172,-42,5);
+  g.strokeStyle="rgba(240,248,255,.09)";g.lineWidth=1;[[-105,50,-78,23],[-14,35,34,12],[35,32,78,22],[78,24,122,8],[-60,4,-50,-20]].forEach(s=>{let a=geo(s[0],s[1]),b=geo(s[2],s[3]);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke()});
 }
 function drawMap(){g.fillStyle=BG;g.fillRect(0,0,W,H);worldMap();
   countries.forEach((a,i)=>countries.forEach((b,j)=>{if(i<j&&Math.hypot(a.x-b.x,a.y-b.y)<245){g.strokeStyle="rgba(125,211,252,.07)";g.lineWidth=1;g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke()}}));
