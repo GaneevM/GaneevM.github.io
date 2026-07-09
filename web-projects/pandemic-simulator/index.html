@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ganeev's Pandemic Simulator</title>
+  <style>
+    html,body{margin:0;background:#0e1220;color:#eee;font-family:Arial,sans-serif;overflow:hidden}
+    canvas{display:block;margin:0 auto;background:#0e1220;max-width:100vw;max-height:100vh}
+  </style>
+</head>
+<body>
+<canvas id="game" width="1280" height="720"></canvas>
+<script>
+const canvas=document.getElementById("game"),g=canvas.getContext("2d"),W=1280,H=720;
+const BG="#0e1220",PANEL="#181e2c",PANEL2="#20283b",WHITE="#ebebeb",MUTED="#aaaab9",ACCENT="#78c8ff",RED="#eb4655",GREEN="#3cd278",YELLOW="#f5c846",PURPLE="#b478ff";
+let mode="CONFIG",buttons=[],selected=[null,null,null],flights=true,boats=true,startName="United States",paused=false,speed=1,sim=null,particles=[];
+const cats=[
+ {name:"Transmission",parts:[["Airborne Mist","+Spreads far / fast crowds","less deadly",{spread:.45,travel:.2,death:-.01}],["Surface Touch","+Steady local spread","slower travel",{spread:.22,travel:-.05}],["Waterborne","+Strong coastal spread","weak inland",{spread:.3,boat:.35}]]},
+ {name:"Symptoms",parts:[["Silent Fever","+Hard to detect","low danger",{stealth:.35,death:-.01}],["Burning Cough","+Very infectious","detected faster",{spread:.25,stealth:-.05}],["Organ Shock","+High danger","slower spread",{death:.04,spread:-.08}]]},
+ {name:"Resistance",parts:[["Heat Shell","+Survives hot climates","costly",{spread:.08}],["Drug Resistant","+Hard to cure","public reacts",{recovery:-.02,stealth:-.05}],["Fast Mutation","+Adapts quickly","unstable",{spread:.2,death:.01,recovery:.01}]]}
+];
+const countries=[
+ ["Canada",180,145,38000,true],["United States",230,205,331000,true],["Mexico",220,292,128000,true],["Brazil",350,430,214000,true],["Argentina",330,540,45000,true],
+ ["United Kingdom",470,170,67000,true],["France",492,215,65000,true],["Russia",645,145,144000,true],["Egypt",560,315,104000,true],["Nigeria",500,385,213000,true],
+ ["South Africa",545,555,60000,true],["India",700,325,1400000,true],["China",790,260,1410000,true],["Japan",895,265,125000,true],["Australia",845,525,26000,true],
+ ["Saudi Arabia",615,315,36000,true],["Indonesia",785,430,276000,true],["Spain",470,245,47000,true],["Germany",515,195,83000,false],["Turkey",575,245,85000,true]
+].map((c,i)=>({id:i,name:c[0],x:c[1],y:c[2],pop:c[3],coastal:c[4]}));
+function base(){return{spread:.22,death:.018,recovery:.055,travel:.24,boat:.18,stealth:.1}}
+function params(){let p=base();selected.forEach((s,i)=>{if(s==null)return;let m=cats[i].parts[s][3];Object.keys(m).forEach(k=>p[k]=(p[k]||0)+m[k])});p.spread=Math.max(.02,p.spread);p.recovery=Math.max(.01,p.recovery);return p}
+function rect(x,y,w,h,label,fill=PANEL2,fg=WHITE){g.fillStyle=fill;round(x,y,w,h,12);g.fill();g.strokeStyle="#32405c";g.stroke();g.fillStyle=fg;g.font="16px Arial";g.textAlign="center";g.fillText(label,x+w/2,y+h/2+6);buttons.push({x,y,w,h,label})}
+function round(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function inside(b,x,y){return x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h}
+let mouse={x:0,y:0};canvas.onmousemove=e=>{let r=canvas.getBoundingClientRect();mouse.x=(e.clientX-r.left)*W/r.width;mouse.y=(e.clientY-r.top)*H/r.height};canvas.onclick=()=>click(mouse.x,mouse.y);
+addEventListener("keydown",e=>{if(e.code==="Space")paused=!paused;if(e.key.toLowerCase()==="r")mode="CONFIG"});
+function click(x,y){let b=buttons.find(q=>inside(q,x,y));if(!b)return;if(mode==="CONFIG"){if(b.cat!=null)selected[b.cat]=b.idx;if(b.label==="Flights")flights=!flights;if(b.label==="Boats")boats=!boats;if(b.country)startName=b.country;if(b.label==="START SIMULATION"&&selected.every(v=>v!=null))start()}else{if(b.label==="PAUSE")paused=!paused;if(b.label==="BUILD A NEW VIRUS")mode="CONFIG";if(b.label==="FASTER")speed=Math.min(4,speed+.5);if(b.label==="SLOWER")speed=Math.max(.5,speed-.5)}}
+function start(){let p=params();sim={p,day:0,S:[],I:[],R:[],D:[],over:false};countries.forEach((c,i)=>{let vaccinated=Math.floor(c.pop*.14);sim.S[i]=c.pop-vaccinated;sim.I[i]=0;sim.R[i]=vaccinated;sim.D[i]=0});let idx=countries.findIndex(c=>c.name===startName);let seed=Math.max(50,Math.floor(countries[idx].pop*.001));sim.S[idx]-=seed;sim.I[idx]+=seed;particles=[];mode="SIM";paused=false}
+function step(dt){if(!sim||paused||sim.over)return;let p=sim.p,days=dt*speed;sim.day+=days;for(let i=0;i<countries.length;i++){let pop=countries[i].pop,D=sim.D[i],active=sim.I[i],sus=sim.S[i];let stealthBoost=1+p.stealth*.5;let newInf=Math.min(sus,active*p.spread*stealthBoost*days*(1-active/pop*.15));let rec=Math.min(active,active*p.recovery*days);let dead=Math.min(active-rec,active*p.death*days*.22);sim.S[i]-=newInf;sim.I[i]+=newInf-rec-dead;sim.R[i]+=rec;sim.D[i]+=dead}
+ if(flights||boats){for(let i=0;i<countries.length;i++){if(sim.I[i]<80)continue;for(let n=0;n<2;n++){let j=Math.random()*countries.length|0;if(j===i)continue;let a=countries[i],b=countries[j],dist=Math.hypot(a.x-b.x,a.y-b.y);let chance=(flights?(.006+p.travel*.012):0)+(boats&&a.coastal&&b.coastal?(.004+p.boat*.018):0);chance*=Math.max(.2,1-dist/1000)*days;if(Math.random()<chance){let move=Math.min(sim.I[i]*.015,sim.S[j]*.02);sim.I[i]-=move;sim.I[j]+=move;particles.push({x:a.x,y:a.y,tx:b.x,ty:b.y,t:0,boat:boats&&!flights&&a.coastal&&b.coastal})}}}}
+ let totalI=sim.I.reduce((a,b)=>a+b,0),totalS=sim.S.reduce((a,b)=>a+b,0);if(sim.day>=365||totalI<1||totalS<1)sim.over=true}
+function config(){g.fillStyle=BG;g.fillRect(0,0,W,H);g.fillStyle=WHITE;g.font="44px Arial";g.textAlign="center";g.fillText("Build Your Virus",W/2,58);g.font="16px Arial";g.fillStyle=MUTED;g.fillText("Pick 1 option per category • Choose starting country • Enable flights and boats",W/2,88);
+ cats.forEach((cat,i)=>{let x=40+i*285,y=125;g.fillStyle=ACCENT;g.font="24px Arial";g.textAlign="left";g.fillText(cat.name,x,y);cat.parts.forEach((p,j)=>{let yy=y+30+j*96,sel=selected[i]===j;rect(x,yy,255,78,p[0],sel?ACCENT:PANEL2,sel?"#071018":WHITE);buttons[buttons.length-1].cat=i;buttons[buttons.length-1].idx=j;g.fillStyle=sel?"#071018":MUTED;g.font="12px Arial";g.textAlign="center";g.fillText(p[1],x+127,yy+52);g.fillText(p[2],x+127,yy+67)})});
+ g.fillStyle=PANEL;round(900,125,330,470,16);g.fill();g.strokeStyle="#32405c";g.stroke();g.fillStyle=WHITE;g.font="24px Arial";g.textAlign="left";g.fillText("Starting Country",930,165);countries.slice(0,10).forEach((c,i)=>{rect(930,185+i*33,130,26,c.name,startName===c.name?ACCENT:PANEL2,startName===c.name?"#071018":WHITE);buttons[buttons.length-1].country=c.name});countries.slice(10,20).forEach((c,i)=>{rect(1070,185+i*33,130,26,c.name,startName===c.name?ACCENT:PANEL2,startName===c.name?"#071018":WHITE);buttons[buttons.length-1].country=c.name});rect(930,535,130,34,"Flights",flights?GREEN:PANEL2,flights?"#071018":WHITE);rect(1070,535,130,34,"Boats",boats?GREEN:PANEL2,boats?"#071018":WHITE);rect(920,610,290,48,"START SIMULATION",selected.every(v=>v!=null)?GREEN:"#43506a",selected.every(v=>v!=null)?"#071018":MUTED)}
+function land(points,fill="#173958"){g.beginPath();points.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fillStyle=fill;g.fill();g.strokeStyle="#315b7a";g.lineWidth=1.5;g.stroke()}
+function drawMap(){g.fillStyle=BG;g.fillRect(0,0,W,H);let grd=g.createLinearGradient(30,90,850,670);grd.addColorStop(0,"#07192f");grd.addColorStop(1,"#0b1020");g.fillStyle=grd;round(30,90,820,580,16);g.fill();g.strokeStyle="#36577a";g.lineWidth=2;g.stroke();
+ for(let x=70;x<840;x+=70){g.strokeStyle="rgba(120,200,255,.08)";g.lineWidth=1;g.beginPath();g.moveTo(x,105);g.lineTo(x,655);g.stroke()}for(let y=130;y<650;y+=55){g.beginPath();g.moveTo(45,y);g.lineTo(835,y);g.stroke()}
+ land([[95,140],[165,118],[235,152],[270,215],[245,285],[205,310],[162,270],[112,280],[82,220]],"#173e5d");
+ land([[205,292],[260,325],[300,392],[292,487],[330,565],[300,620],[250,540],[225,450],[190,380]],"#1b4560");
+ land([[435,150],[515,120],[610,130],[695,165],[735,230],[690,280],[570,262],[500,235],[440,245],[405,200]],"#183d5d");
+ land([[470,245],[548,265],[590,325],[565,405],[515,475],[455,430],[430,350]],"#1a4560");
+ land([[650,255],[735,220],[820,240],[842,312],[805,375],[725,365],[665,320]],"#174160");
+ land([[780,478],[850,485],[878,535],[835,585],[765,560],[740,515]],"#1d4a63");
+ land([[555,500],[620,518],[655,575],[615,625],[548,600],[525,548]],"#173c5b");
+ countries.forEach((a,i)=>countries.forEach((b,j)=>{if(i<j&&Math.hypot(a.x-b.x,a.y-b.y)<260){g.strokeStyle="rgba(120,200,255,.10)";g.lineWidth=1;g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke()}}));
+ particles.forEach(p=>{p.t+=.018*speed;let x=p.x+(p.tx-p.x)*p.t,y=p.y+(p.ty-p.y)*p.t;g.strokeStyle=p.boat?"rgba(245,200,70,.35)":"rgba(120,200,255,.35)";g.lineWidth=2;g.beginPath();g.moveTo(p.x,p.y);g.lineTo(x,y);g.stroke();g.fillStyle=p.boat?YELLOW:ACCENT;g.beginPath();g.arc(x,y,4.5,0,7);g.fill()});particles=particles.filter(p=>p.t<1);
+ let hovered=null;countries.forEach((c,i)=>{let inf=sim.I[i],ratio=inf/c.pop,pulse=1+Math.sin(Date.now()/220+i)*.08;let r=10+Math.min(62,ratio*1300)*pulse;if(ratio>.0001){let rad=g.createRadialGradient(c.x,c.y,2,c.x,c.y,r);rad.addColorStop(0,`rgba(255,90,100,${.75})`);rad.addColorStop(.45,`rgba(235,70,85,${.30+Math.min(.38,ratio*60)})`);rad.addColorStop(1,"rgba(235,70,85,0)");g.fillStyle=rad;g.beginPath();g.arc(c.x,c.y,r,0,7);g.fill()}g.fillStyle=ratio>.015?RED:ACCENT;g.beginPath();g.arc(c.x,c.y,5.5,0,7);g.fill();g.strokeStyle="#ffffffaa";g.lineWidth=1;g.stroke();g.fillStyle=WHITE;g.font="11px Arial";g.textAlign="left";g.fillText(c.name,c.x+9,c.y-9);if(Math.hypot(mouse.x-c.x,mouse.y-c.y)<Math.max(18,r*.55))hovered=i});
+ g.fillStyle="rgba(255,255,255,.75)";g.font="12px Arial";g.textAlign="left";g.fillText("Flights/boats spread infection along glowing travel routes",50,645);
+ if(hovered!=null){let c=countries[hovered];g.fillStyle="#05070de6";round(mouse.x+14,mouse.y+14,235,105,10);g.fill();g.strokeStyle="#395b82";g.stroke();g.fillStyle=WHITE;g.font="15px Arial";g.textAlign="left";g.fillText(c.name,mouse.x+28,mouse.y+39);g.fillStyle=MUTED;g.font="13px Arial";g.fillText(`Population: ${Math.round(c.pop).toLocaleString()}`,mouse.x+28,mouse.y+61);g.fillText(`Infected: ${Math.round(sim.I[hovered]).toLocaleString()}`,mouse.x+28,mouse.y+80);g.fillText(`Deaths: ${Math.round(sim.D[hovered]).toLocaleString()}`,mouse.x+28,mouse.y+99)}}
+function stats(){let pop=countries.reduce((a,c)=>a+c.pop,0),I=sim.I.reduce((a,b)=>a+b,0),R=sim.R.reduce((a,b)=>a+b,0),D=sim.D.reduce((a,b)=>a+b,0);g.fillStyle=PANEL;round(880,90,370,580,16);g.fill();g.strokeStyle="#32405c";g.stroke();g.fillStyle=WHITE;g.font="30px Arial";g.textAlign="left";g.fillText("World Status",910,135);let lines=[`Day: ${Math.floor(sim.day)} / 365`,`Infected: ${Math.round(I).toLocaleString()}`,`Recovered/Vaccinated: ${Math.round(R).toLocaleString()}`,`Deaths: ${Math.round(D).toLocaleString()}`,`Healthy: ${Math.round(pop-I-R-D).toLocaleString()}`,`Speed: ${speed.toFixed(1)}x`];g.font="18px Arial";lines.forEach((l,i)=>{g.fillStyle=i===1?RED:i===2?GREEN:i===3?YELLOW:WHITE;g.fillText(l,910,180+i*34)});let top=countries.map((c,i)=>[c.name,sim.I[i]]).sort((a,b)=>b[1]-a[1]).slice(0,8);g.fillStyle=ACCENT;g.font="20px Arial";g.fillText("Top outbreaks",910,430);g.font="15px Arial";top.forEach((t,i)=>{g.fillStyle=MUTED;g.fillText(`${t[0]}: ${Math.round(t[1]).toLocaleString()}`,910,460+i*23)});rect(910,620,90,38,paused?"RESUME":"PAUSE",ACCENT,"#071018");buttons[buttons.length-1].label="PAUSE";rect(1010,620,90,38,"SLOWER");rect(1110,620,90,38,"FASTER");if(sim.over){g.fillStyle="#000c";g.fillRect(0,0,W,H);g.fillStyle=WHITE;g.font="48px Arial";g.textAlign="center";g.fillText("Simulation Complete",W/2,H/2-40);rect(W/2-150,H/2+80,300,50,"BUILD A NEW VIRUS",GREEN,"#071018")}}
+function simDraw(){step(1/60);drawMap();stats();g.fillStyle=WHITE;g.font="18px Arial";g.textAlign="left";g.fillText("SPACE: pause  |  R: restart",30,36)}
+function loop(){buttons=[];if(mode==="CONFIG")config();else simDraw();requestAnimationFrame(loop)}loop();
+</script>
+</body>
+</html>

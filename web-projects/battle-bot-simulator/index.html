@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ganeev's Battlebot Sim</title>
+  <style>
+    html,body{margin:0;background:#141419;color:white;font-family:Arial,sans-serif;overflow:hidden}
+    canvas{display:block;margin:0 auto;background:#282a2d;max-width:100vw;max-height:100vh}
+  </style>
+</head>
+<body>
+<canvas id="game" width="1200" height="750"></canvas>
+<script>
+const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
+const W=1200,H=750,WHITE="#f5f5f5",BLACK="#141419",RED="#c82828",BLUE="#2850c8",STEEL="#8c919b",DARK="#3c4146",GOLD="#daa520",GREEN="#39ff14",PANEL="#23262d";
+const HEADS={
+ "Sentry Dome":{hp:60,color:"#648cb4",shape:"dome",desc:"Lightweight. Features a determined face. Low HP."},
+ "Iron Cube":{hp:110,color:"#963c3c",shape:"cube",desc:"Heavy plating. Features a grumpy face. High HP."},
+ "Spike Unit":{hp:80,color:"#b48228",shape:"spike",desc:"Aerodynamic. Features a crazy face. Balanced."}
+};
+const BODIES={
+ Scout:{hp:120,speed:6.5,accel:.8,mass:1,color:"#82b482",size:[45,55],desc:"High agility. Very low armor. Drifts easily."},
+ Warrior:{hp:180,speed:4.5,accel:.5,mass:2,color:"#8282aa",size:[55,65],desc:"Standard military chassis. Reliable movement."},
+ Goliath:{hp:300,speed:2.8,accel:.2,mass:4,color:"#a07850",size:[75,85],desc:"Slow juggernaut. Extreme HP. Hard to stop."}
+};
+const ARMS={
+ "Plasma Blaster":{damage:28,cooldown:35,range:450,type:"projectile",color:GREEN,desc:"Long range plasma bolts. High recoil."},
+ "Pulse Laser":{damage:5,cooldown:1,range:320,type:"beam",color:"#00ffff",desc:"Continuous energy beam. No travel time."},
+ "Mega Hammer":{damage:85,cooldown:70,range:130,type:"melee",color:STEEL,desc:"Crushing melee damage. Slow swing speed."}
+};
+const LEGS={
+ "Heavy Wheels":{speed_mult:1.4,def:5,friction:.92,color:"#1e1e1e",desc:"Highest top speed. Poor defense."},
+ "Tank Treads":{speed_mult:.8,def:20,friction:.85,color:"#46413c",desc:"Unstoppable traction. Massive armor bonus."},
+ "Mag-Lev":{speed_mult:1.2,def:8,friction:.98,color:"#64b4dc",desc:"Smooth hovering. Excellent control."}
+};
+let state="MENU",isSP=true,pTurn=1,p1b={head:"Sentry Dome",body:"Warrior",arms:"Pulse Laser",legs:"Heavy Wheels"},p2b={head:"Sentry Dome",body:"Warrior",arms:"Pulse Laser",legs:"Heavy Wheels"};
+let buttons=[],projectiles=[],r1,r2,winner=0,keys={},mouse={x:0,y:0,down:false};
+addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(state==="BATTLE"&&e.key==="Escape")state="MENU"});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+canvas.addEventListener("mousemove",e=>{const r=canvas.getBoundingClientRect();mouse.x=(e.clientX-r.left)*canvas.width/r.width;mouse.y=(e.clientY-r.top)*canvas.height/r.height});
+canvas.addEventListener("mousedown",()=>{mouse.down=true;click(mouse.x,mouse.y)});
+function rect(x,y,w,h,label,fill=STEEL,fg=BLACK){ctx.fillStyle=fill;round(x,y,w,h,12);ctx.fill();ctx.fillStyle=fg;ctx.font="28px Impact";ctx.textAlign="center";ctx.fillText(label,x+w/2,y+h/2+10);buttons.push({x,y,w,h,label})}
+function inside(b,x,y){return x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h}
+function round(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function reset(){pTurn=1;projectiles=[];winner=0;p1b={head:"Sentry Dome",body:"Warrior",arms:"Pulse Laser",legs:"Heavy Wheels"};p2b={head:"Sentry Dome",body:"Warrior",arms:"Pulse Laser",legs:"Heavy Wheels"}}
+function choice(list){return Object.keys(list)[Math.random()*Object.keys(list).length|0]}
+function click(x,y){
+ const hit=buttons.find(b=>inside(b,x,y)); if(!hit)return;
+ if(state==="MENU"){if(hit.label==="SINGLE PLAYER"){isSP=true;state="FORGE"} if(hit.label==="MULTIPLAYER"){isSP=false;state="FORGE"}}
+ else if(state==="FORGE"){
+   if(hit.cat){(pTurn===1?p1b:p2b)[hit.cat]=hit.name}
+   if(hit.label==="LOCK IN"){
+     if(pTurn===1&&!isSP)pTurn=2; else {if(isSP)p2b={head:choice(HEADS),body:choice(BODIES),arms:choice(ARMS),legs:choice(LEGS)};r1=new Robot(200,375,p1b,1);r2=new Robot(1000,375,p2b,2);state="BATTLE";}
+   }
+ } else if(state==="WIN"&&hit.label==="RESTART"){reset();state="MENU";}
+}
+class Projectile{constructor(x,y,a,dmg,color,owner){this.x=x;this.y=y;this.vx=Math.cos(a)*15;this.vy=Math.sin(a)*15;this.dmg=dmg;this.color=color;this.owner=owner;this.alive=true}update(target){this.x+=this.vx;this.y+=this.vy;if(Math.hypot(target.x-this.x,target.y-this.y)<55){target.hp-=this.dmg;this.alive=false}if(this.x<0||this.x>W||this.y<0||this.y>H)this.alive=false}draw(){ctx.fillStyle=this.color;ctx.beginPath();ctx.arc(this.x,this.y,10,0,7);ctx.fill();ctx.fillStyle=WHITE;ctx.beginPath();ctx.arc(this.x,this.y,5,0,7);ctx.fill()}}
+class Robot{
+ constructor(x,y,parts,num){this.x=x;this.y=y;this.parts={...parts};this.num=num;this.hp=HEADS[parts.head].hp+BODIES[parts.body].hp;this.max=this.hp;this.vx=0;this.vy=0;this.cool=0;this.bob=0;this.arm=0}
+ get body(){return BODIES[this.parts.body]} get leg(){return LEGS[this.parts.legs]} get armStats(){return ARMS[this.parts.arms]}
+ move(up,down,left,right){if(this.hp<=0)return;let ax=0,ay=0;if(keys[up])ay-=this.body.accel;if(keys[down])ay+=this.body.accel;if(keys[left])ax-=this.body.accel;if(keys[right])ax+=this.body.accel;this.vx=(this.vx+ax)*this.leg.friction;this.vy=(this.vy+ay)*this.leg.friction;this.x=Math.max(60,Math.min(W-60,this.x+this.vx*this.leg.speed_mult));this.y=Math.max(60,Math.min(H-60,this.y+this.vy*this.leg.speed_mult))}
+ ai(enemy){let d=Math.hypot(enemy.x-this.x,enemy.y-this.y)||1;if(d>150){this.vx+=(enemy.x-this.x)/d*.2;this.vy+=(enemy.y-this.y)/d*.2}this.vx*=this.leg.friction;this.vy*=this.leg.friction;this.x=Math.max(60,Math.min(W-60,this.x+this.vx));this.y=Math.max(60,Math.min(H-60,this.y+this.vy))}
+ action(enemy){if(this.hp<=0)return;if(this.cool>0)this.cool--;let a=this.armStats,d=Math.hypot(enemy.x-this.x,enemy.y-this.y);if(d<a.range&&this.cool<=0){if(a.type==="projectile"){projectiles.push(new Projectile(this.x,this.y,Math.atan2(enemy.y-this.y,enemy.x-this.x),a.damage,a.color,this.num));this.cool=a.cooldown}else if(a.type==="melee"){this.arm=90;enemy.hp-=Math.max(5,a.damage-enemy.leg.def);this.cool=a.cooldown}else{enemy.hp-=a.damage/8}}}
+ draw(enemy){if(this.hp<=0)return;this.bob=Math.sin(Date.now()*.01)*4;if(this.arm>0)this.arm-=6;let bx=this.x,by=this.y+this.bob;if(this.armStats.type==="beam"&&Math.hypot(enemy.x-this.x,enemy.y-this.y)<this.armStats.range){ctx.strokeStyle=this.armStats.color;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(enemy.x,enemy.y);ctx.stroke()}let left=this.x>enemy.x;part(bx,by+40,"legs",this.parts.legs,0,1);part(bx-45,by,"arms",this.parts.arms,this.arm,left?-1:1);part(bx+45,by,"arms",this.parts.arms,-this.arm,left?1:-1);part(bx,by,"body",this.parts.body,0,1);part(bx,by-55,"head",this.parts.head,0,1);ctx.fillStyle=BLACK;ctx.fillRect(bx-52,by-102,104,14);ctx.fillStyle=this.num===1?RED:BLUE;ctx.fillRect(bx-50,by-100,100*Math.max(0,this.hp/this.max),10)}
+}
+function part(x,y,type,name,angle=0,flip=1){ctx.save();ctx.translate(x,y);ctx.rotate(angle*Math.PI/180);ctx.scale(flip,1);ctx.lineWidth=4;if(type==="head"){let d=HEADS[name];ctx.fillStyle=d.color;if(d.shape==="dome"){ctx.beginPath();ctx.arc(0,0,35,0,7);ctx.fill();eyes(-10,-5,10,-5);ctx.strokeStyle=BLACK;line(-10,15,10,15)}else if(d.shape==="cube"){ctx.fillRect(-30,-30,60,60);ctx.strokeStyle=BLACK;line(-15,-15,-5,-10);line(15,-15,5,-10);ctx.fillStyle="#ff3232";ctx.fillRect(-12,10,24,4)}else{ctx.beginPath();ctx.moveTo(0,-45);ctx.lineTo(-30,20);ctx.lineTo(30,20);ctx.closePath();ctx.fill();eyes(-8,-5,8,-5);ctx.strokeStyle=BLACK;ctx.beginPath();ctx.arc(0,11,10,Math.PI,0);ctx.stroke()}}else if(type==="body"){let b=BODIES[name],s=b.size;ctx.fillStyle=b.color;round(-s[0]/2,-s[1]/2,s[0],s[1],10);ctx.fill();ctx.strokeStyle="#0009";ctx.stroke();for(let i=0;i<4;i++){ctx.strokeStyle="#282828";line(-s[0]/2+8,-20+i*12,s[0]/2-8,-20+i*12)}}else if(type==="arms"){if(name==="Mega Hammer"){ctx.fillStyle=DARK;ctx.fillRect(-6,0,12,60);ctx.fillStyle=STEEL;round(-25,-20,50,40,4);ctx.fill()}else if(name==="Pulse Laser"){ctx.fillStyle=DARK;round(-12,-12,65,24,6);ctx.fill();ctx.fillStyle="#00ffff";ctx.beginPath();ctx.arc(50,0,8,0,7);ctx.fill()}else{ctx.fillStyle="#323237";ctx.fillRect(-10,-18,75,36);ctx.fillStyle=GREEN;ctx.fillRect(40,-12,20,24)}}else{if(name==="Heavy Wheels"){ctx.fillStyle="#141419";ctx.beginPath();ctx.arc(-35,10,22,0,7);ctx.arc(35,10,22,0,7);ctx.fill()}else if(name==="Tank Treads"){ctx.fillStyle="#1e1e1e";round(-55,0,110,35,12);ctx.fill()}else{ctx.fillStyle="rgba(100,200,255,.6)";ctx.beginPath();ctx.ellipse(0,20,55,17,0,0,7);ctx.fill()}}ctx.restore()}
+function eyes(x1,y1,x2,y2){ctx.fillStyle=WHITE;ctx.beginPath();ctx.arc(x1,y1,6,0,7);ctx.arc(x2,y2,6,0,7);ctx.fill();ctx.fillStyle=BLACK;ctx.beginPath();ctx.arc(x1,y1,2,0,7);ctx.arc(x2,y2,2,0,7);ctx.fill()}
+function line(x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
+function menu(){ctx.fillStyle=BLACK;ctx.fillRect(0,0,W,H);ctx.fillStyle=WHITE;ctx.font="80px Impact";ctx.textAlign="center";ctx.fillText("GANEEV'S BATTLEBOT SIM",W/2,220);rect(W/2-150,350,300,60,"SINGLE PLAYER");rect(W/2-150,450,300,60,"MULTIPLAYER")}
+function forge(){ctx.fillStyle=PANEL;ctx.fillRect(0,0,W,H);let b=pTurn===1?p1b:p2b,hover="";ctx.font="28px Impact";ctx.textAlign="left";let rows=[["head",HEADS],["body",BODIES],["arms",ARMS],["legs",LEGS]];rows.forEach(([cat,data],i)=>{let y=100+i*120;ctx.fillStyle=GOLD;ctx.fillText(cat.toUpperCase(),50,y);Object.keys(data).forEach((name,j)=>{let x=50+j*130,r={x,y:y+40,w:120,h:60,cat,name,label:name};ctx.fillStyle=b[cat]===name?GOLD:(inside(r,mouse.x,mouse.y)?STEEL:DARK);round(x,y+40,120,60,8);ctx.fill();ctx.fillStyle=BLACK;ctx.font="15px Arial";ctx.textAlign="center";ctx.fillText(name,x+60,y+75);buttons.push(r);if(inside(r,mouse.x,mouse.y))hover=data[name].desc})});if(hover){ctx.fillStyle=BLACK;round(50,650,650,40,5);ctx.fill();ctx.fillStyle=WHITE;ctx.font="16px Arial";ctx.textAlign="left";ctx.fillText(hover,70,675)}ctx.fillStyle=BLACK;round(W-450,100,400,500,20);ctx.fill();new Robot(W-250,350,b,pTurn).draw(new Robot(W-200,350,b,pTurn));rect(W-350,620,200,60,"LOCK IN",GREEN,BLACK);ctx.fillStyle=WHITE;ctx.font="28px Impact";ctx.textAlign="center";ctx.fillText(isSP?"SINGLE PLAYER":`PLAYER ${pTurn} BUILD`,W-250,85)}
+function battle(){ctx.fillStyle="#282a2d";ctx.fillRect(0,0,W,H);ctx.fillStyle="rgba(0,0,0,.12)";ctx.font="80px Impact";ctx.textAlign="center";ctx.fillText("GANEEV'S BATTLEBOT SIM",W/2,H/2);r1.move("w","s","a","d");if(isSP)r2.ai(r1);else r2.move("arrowup","arrowdown","arrowleft","arrowright");r1.action(r2);r2.action(r1);projectiles.forEach(p=>{p.update(p.owner===2?r1:r2);p.draw()});projectiles=projectiles.filter(p=>p.alive);r1.draw(r2);r2.draw(r1);ctx.fillStyle=WHITE;ctx.font="18px Arial";ctx.textAlign="left";ctx.fillText("P1: WASD" + (isSP?"  | AI opponent":"  | P2: Arrow keys"),24,30);if(r1.hp<=0||r2.hp<=0){winner=r1.hp>0?1:2;state="WIN"}}
+function win(){ctx.fillStyle=BLACK;ctx.fillRect(0,0,W,H);ctx.fillStyle=winner===1?RED:BLUE;ctx.font="80px Impact";ctx.textAlign="center";ctx.fillText(`PLAYER ${winner} VICTORIOUS`,W/2,310);rect(W/2-100,450,200,60,"RESTART",WHITE,BLACK)}
+function loop(){buttons=[];if(state==="MENU")menu();else if(state==="FORGE")forge();else if(state==="BATTLE")battle();else win();requestAnimationFrame(loop)}loop();
+</script>
+</body>
+</html>
