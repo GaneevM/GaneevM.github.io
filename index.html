@@ -3,23 +3,151 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ganeev's Web Projects</title>
+  <title>Ganeev Mujral | Developer & Robotics Builder</title>
+  <meta name="description" content="Portfolio for Ganeev Mujral - Python developer, robotics builder, simulation creator, and youth leader." />
   <style>
-    body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#263658,#10131a 60%);color:white;min-height:100vh;text-align:center;padding:55px 18px}
-    h1{font-size:clamp(38px,7vw,72px);margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:1050px;margin:38px auto}
-    .card{background:#1d2434;border:1px solid #3b4660;border-radius:20px;padding:24px;box-shadow:0 18px 45px #0006}.card h2{margin-top:0}.card p{color:#b7c1d9;min-height:44px}
-    a{display:inline-block;margin-top:8px;color:#061018;background:#65e2ff;padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:900}
+    :root{
+      --bg:#08111f;--panel:#111c2f;--panel2:#16243b;--text:#f6f8ff;--muted:#aebbd3;
+      --accent:#69e3ff;--accent2:#8b7dff;--gold:#ffd166;--line:#2c3e63;--good:#6dffb3;
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 20% 0%,#1d3a67 0,#0b1424 36%,#060b14 100%);color:var(--text)}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(#000,transparent 80%)}
+    a{color:inherit}.wrap{max-width:1160px;margin:auto;padding:0 22px}.nav{position:sticky;top:0;z-index:10;background:rgba(8,17,31,.78);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav .wrap{height:68px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;letter-spacing:.4px}.nav a{color:var(--muted);text-decoration:none;margin-left:20px;font-weight:700}.nav a:hover{color:var(--accent)}
+    .hero{padding:92px 0 70px}.hero-grid{display:grid;grid-template-columns:1.18fr .82fr;gap:34px;align-items:center}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--accent);font-weight:900;text-transform:uppercase;letter-spacing:.14em;font-size:12px}
+    h1{font-size:clamp(46px,8vw,86px);line-height:.95;margin:18px 0 18px;letter-spacing:-.06em}.lead{font-size:clamp(18px,2.3vw,23px);line-height:1.55;color:#dce7ff;max-width:760px}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,var(--accent),#9a8cff);color:#04111d;text-decoration:none;font-weight:950;box-shadow:0 16px 36px rgba(105,227,255,.18)}
+    .btn.secondary{background:rgba(255,255,255,.06);color:var(--text);box-shadow:none}.card{background:linear-gradient(180deg,rgba(22,36,59,.9),rgba(13,22,38,.9));border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+    .profile-card{position:relative;overflow:hidden}.profile-card:before{content:"";position:absolute;inset:-90px -80px auto auto;width:220px;height:220px;background:radial-gradient(circle,var(--accent),transparent 65%);opacity:.22}.metric{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:18px}.metric b{color:var(--accent);font-size:24px}.metric span{color:var(--muted)}
+    section{padding:48px 0}h2{font-size:clamp(30px,4vw,46px);margin:0 0 20px;letter-spacing:-.04em}.section-sub{color:var(--muted);margin-top:-10px;margin-bottom:24px}.grid{display:grid;gap:18px}.projects{grid-template-columns:repeat(3,1fr)}.project h3,.mini h3{margin:0 0 8px;font-size:22px}.project p,.mini p{color:var(--muted);line-height:1.55}.tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.tag{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:#d8e6ff;background:rgba(255,255,255,.045);font-size:13px;font-weight:800}.project a{display:inline-block;margin-top:12px;text-decoration:none;color:var(--accent);font-weight:900}
+    .two{grid-template-columns:1fr 1fr}.timeline{display:grid;gap:14px}.item{padding:18px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045)}.item .date{color:var(--gold);font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.08em}.item p{color:var(--muted);line-height:1.5;margin-bottom:0}
+    .skills{grid-template-columns:repeat(4,1fr)}.mini{min-height:150px}.footer{padding:36px 0 60px;color:var(--muted);text-align:center}.footer a{color:var(--accent);font-weight:900}
+    @media(max-width:900px){.hero-grid,.projects,.two,.skills{grid-template-columns:1fr}.nav .links{display:none}.hero{padding-top:58px}}
   </style>
 </head>
 <body>
-  <h1>Ganeev's Web Projects</h1>
-  <p>Playable browser versions of my Python projects.</p>
-  <div class="grid">
-    <section class="card"><h2>Chem Lab Alchemy</h2><p>Combine elements and unlock discoveries.</p><a href="alchemy/">Play</a></section>
-    <section class="card"><h2>Battle Bot Simulator</h2><p>Build a robot and fight the arena AI.</p><a href="battle-bot-simulator/">Play</a></section>
-    <section class="card"><h2>Circuit Simulator</h2><p>Place wires, batteries, bulbs, and resistors.</p><a href="circuit-simulator/">Open</a></section>
-    <section class="card"><h2>Graphing Calculator</h2><p>Plot equations directly in the browser.</p><a href="graphing-calculator/">Open</a></section>
-    <section class="card"><h2>Pandemic Simulator</h2><p>Watch infection spread between cities.</p><a href="pandemic-simulator/">Run</a></section>
-  </div>
+  <nav class="nav">
+    <div class="wrap">
+      <div class="brand">Ganeev Mujral</div>
+      <div class="links">
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#skills">Skills</a>
+        <a href="resume.pdf">Resume</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Python Developer • Robotics Builder • Simulation Designer</div>
+        <h1>Building simulations, robots, and browser games.</h1>
+        <p class="lead">I’m a Burnsview Secondary student in the Dual Dogwood program with a focus on programming, robotics, physics, and interactive simulations. My projects turn science, engineering, and math ideas into playable tools.</p>
+        <div class="actions">
+          <a class="btn" href="web-projects/">Explore Projects</a>
+          <a class="btn secondary" href="resume.pdf">Download Resume</a>
+          <a class="btn secondary" href="https://github.com/GaneevM">GitHub</a>
+          <a class="btn secondary" href="mailto:smganeev@gmail.com">Email Me</a>
+        </div>
+      </div>
+      <aside class="card profile-card">
+        <h2>At a glance</h2>
+        <div class="metric"><b>5+</b><span>Python games and simulations converted toward web play</span></div>
+        <div class="metric"><b>140+</b><span>youth supported through leadership programs</span></div>
+        <div class="metric"><b>5</b><span>languages: English, French, Punjabi, Hindi, Urdu</span></div>
+        <div class="metric"><b>Top 25%</b><span>Waterloo Pascal Contest Distinction</span></div>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section id="projects">
+      <div class="wrap">
+        <h2>Featured projects</h2>
+        <p class="section-sub">Games, simulations, and engineering tools built while learning Python, Java, robotics, and web development.</p>
+        <div class="grid projects">
+          <article class="card project">
+            <h3>Zero Signal</h3>
+            <p>A browser FPS game with smarter enemies, multiple maps, weapon visuals, grenades, and shotgun pellet effects.</p>
+            <div class="tagrow"><span class="tag">HTML Canvas</span><span class="tag">Game AI</span><span class="tag">FPS</span></div>
+            <a href="web-projects/zero-signal/">Play Zero Signal →</a>
+          </article>
+          <article class="card project">
+            <h3>Battle Bot Simulator</h3>
+            <p>A modular robot battle simulator using customizable heads, bodies, weapons, legs, stat-based combat, and opponent AI.</p>
+            <div class="tagrow"><span class="tag">Pygame</span><span class="tag">Robotics</span><span class="tag">Simulation</span></div>
+            <a href="web-projects/battle-bot-simulator/">Play Web Version →</a>
+          </article>
+          <article class="card project">
+            <h3>Pandemic Simulator</h3>
+            <p>A world-spread simulator with virus traits, travel routes, country outbreaks, recovery, vaccination, and statistics.</p>
+            <div class="tagrow"><span class="tag">Simulation</span><span class="tag">Data</span><span class="tag">Canvas</span></div>
+            <a href="web-projects/pandemic-simulator/">Run Simulation →</a>
+          </article>
+          <article class="card project">
+            <h3>Chem Lab</h3>
+            <p>An interactive chemistry game where players combine elements and unlock increasingly complex discoveries.</p>
+            <div class="tagrow"><span class="tag">Chemistry</span><span class="tag">Game Design</span></div>
+            <a href="web-projects/alchemy/">Open Chem Lab →</a>
+          </article>
+          <article class="card project">
+            <h3>Circuit Simulator</h3>
+            <p>A circuit-building tool for experimenting with wires, batteries, resistors, switches, and bulb behavior.</p>
+            <div class="tagrow"><span class="tag">Physics</span><span class="tag">Circuits</span></div>
+            <a href="web-projects/circuit-simulator/">Open Simulator →</a>
+          </article>
+          <article class="card project">
+            <h3>Graphing Calculator</h3>
+            <p>A Desmos-inspired calculator that parses equations and plots mathematical functions visually.</p>
+            <div class="tagrow"><span class="tag">Math</span><span class="tag">Functions</span></div>
+            <a href="web-projects/graphing-calculator/">Open Calculator →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="wrap grid two">
+        <div>
+          <h2>Leadership & robotics</h2>
+          <p class="section-sub">A mix of technical building and community leadership.</p>
+          <div class="timeline">
+            <div class="item"><div class="date">2025 - Present</div><h3>Robotics Team Member - Builder</h3><p>Built a VEX competition robot with a five-person team, including drivetrain work, goal scraper mechanisms, ball intake/outtake, and scoring systems.</p></div>
+            <div class="item"><div class="date">2023 - 2025</div><h3>YbYg Youth Initiative - Youth Leader</h3><p>Led weekly wrestling practices and youth programs across Metro Vancouver, teaching sports, public speaking, and success tools.</p></div>
+            <div class="item"><div class="date">2025 - Present</div><h3>Youth Connect Events - Vice President</h3><p>Helped organize charity events, including an auction and badminton tournament that raised funds and grants for community initiatives.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Education</h2>
+          <p><strong>Burnsview Secondary School</strong><br>Dual Dogwood Diploma, French Immersion<br>September 2023 - June 2027</p>
+          <div class="tagrow">
+            <span class="tag">Calculus 12 - 100%</span>
+            <span class="tag">Physics 11 - 96%</span>
+            <span class="tag">Chemistry 11 - 97%</span>
+            <span class="tag">Honour Roll</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap">
+        <h2>Skills & interests</h2>
+        <div class="grid skills">
+          <div class="card mini"><h3>Programming</h3><p>Python, Java, JavaScript, HTML/CSS, Git, Pygame, canvas-based web development.</p></div>
+          <div class="card mini"><h3>Engineering</h3><p>Robotics, drivetrain design, mechanisms, electrical concepts, and simulation systems.</p></div>
+          <div class="card mini"><h3>Leadership</h3><p>Youth coaching, event organizing, public speaking support, team collaboration, and mentorship.</p></div>
+          <div class="card mini"><h3>Languages</h3><p>English, French, Punjabi, Hindi, and Urdu.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Built by Ganeev Mujral • <a href="mailto:smganeev@gmail.com">smganeev@gmail.com</a> • <a href="https://github.com/GaneevM">github.com/GaneevM</a></p>
+    </div>
+  </footer>
 </body>
 </html>
