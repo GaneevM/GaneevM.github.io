@@ -7,22 +7,24 @@
   <meta name="description" content="Portfolio for Ganeev Mujral - student developer, robotics builder, and simulation creator." />
   <style>
     :root{
-      --bg:#0b111c;
-      --panel:#121b2b;
-      --panel-soft:#172235;
-      --text:#f4f6fb;
-      --muted:#a9b4c7;
-      --accent:#7dd3fc;
-      --accent-2:#a7f3d0;
-      --line:#28364f;
-      --paper:#eef4ff;
+      --bg:#0d1118;
+      --panel:#121926;
+      --panel-soft:#182233;
+      --text:#f6f1e8;
+      --muted:#b8c0ce;
+      --accent:#d6b36a;
+      --accent-2:#8fd4ff;
+      --line:#30394a;
+      --paper:#f4ead8;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
       margin:0;
       font-family:Inter,Segoe UI,Arial,sans-serif;
-      background:#0b111c;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.025),transparent 260px),
+        #0d1118;
       color:var(--text);
       line-height:1.6;
     }
@@ -32,8 +34,8 @@
       inset:0;
       pointer-events:none;
       background:
-        radial-gradient(circle at 18% 6%,rgba(125,211,252,.16),transparent 32%),
-        radial-gradient(circle at 82% 0%,rgba(167,243,208,.10),transparent 28%);
+        radial-gradient(circle at 18% 6%,rgba(214,179,106,.13),transparent 30%),
+        radial-gradient(circle at 82% 0%,rgba(143,212,255,.10),transparent 28%);
     }
     a{color:inherit}
     .wrap{width:min(1120px,calc(100% - 40px));margin:0 auto}
@@ -41,7 +43,7 @@
       position:sticky;
       top:0;
       z-index:5;
-      background:rgba(11,17,28,.86);
+      background:rgba(13,17,24,.88);
       border-bottom:1px solid var(--line);
       backdrop-filter:blur(14px);
     }
@@ -64,13 +66,13 @@
       border-radius:14px;
       padding:12px 16px;
       background:var(--paper);
-      color:#0b111c;
+      color:#0d1118;
       text-decoration:none;
       font-weight:800;
     }
     .btn.secondary{background:transparent;color:var(--text)}
     .card{
-      background:linear-gradient(180deg,var(--panel-soft),var(--panel));
+      background:linear-gradient(180deg,rgba(24,34,51,.96),rgba(18,25,38,.96));
       border:1px solid var(--line);
       border-radius:20px;
       padding:24px;
@@ -80,7 +82,7 @@
     .note p{margin:0 0 14px;color:var(--muted)}
     .stat{padding:14px 0;border-top:1px solid var(--line)}
     .stat:first-of-type{border-top:0}
-    .stat b{display:block;color:var(--accent);font-size:24px;line-height:1.2}
+    .stat b{display:block;color:var(--accent);font-size:23px;line-height:1.2}
     .stat span{color:var(--muted)}
     section{padding:54px 0}
     h2{font-size:clamp(30px,4vw,44px);letter-spacing:-.035em;line-height:1.1;margin:0 0 14px}
@@ -89,19 +91,27 @@
     .projects{grid-template-columns:repeat(3,1fr)}
     .project h3,.small-card h3,.item h3{margin:0 0 8px;font-size:21px}
     .project p,.small-card p,.item p{color:var(--muted);margin:0}
-    .project a{display:inline-block;margin-top:16px;color:var(--accent);font-weight:800;text-decoration:none}
+    .project a{display:inline-block;margin-top:16px;color:var(--accent-2);font-weight:800;text-decoration:none}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-    .tag{font-size:12px;font-weight:750;color:#dce8f8;border:1px solid var(--line);background:rgba(255,255,255,.04);padding:6px 9px;border-radius:999px}
+    .tag{font-size:12px;font-weight:750;color:#efe4ca;border:1px solid var(--line);background:rgba(214,179,106,.07);padding:6px 9px;border-radius:999px}
     .two{grid-template-columns:1.08fr .92fr}
     .timeline{display:grid;gap:14px}
     .item{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:18px;padding:18px}
     .date{font-size:13px;color:var(--accent-2);font-weight:800;margin-bottom:6px}
     .skills{grid-template-columns:repeat(4,1fr)}
     .small-card{min-height:150px}
+    .edu-list{display:grid;gap:12px;margin-top:18px}
+    .edu-point{border-top:1px solid var(--line);padding-top:12px;color:var(--muted)}
+    .edu-point strong{display:block;color:var(--text);margin-bottom:2px}
+    .course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+    .course{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;padding:13px}
+    .course b{display:block;color:var(--accent);font-size:22px;line-height:1}
+    .course span{color:var(--muted);font-size:13px}
+    .internship-note{margin-top:18px;padding:16px;border-radius:16px;background:rgba(143,212,255,.07);border:1px solid rgba(143,212,255,.24);color:#d9ecff}
     footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);text-align:center}
-    footer a{color:var(--accent);font-weight:800;text-decoration:none}
+    footer a{color:var(--accent-2);font-weight:800;text-decoration:none}
     @media(max-width:900px){
-      .hero-grid,.projects,.two,.skills{grid-template-columns:1fr}
+      .hero-grid,.projects,.two,.skills,.course-grid{grid-template-columns:1fr}
       .links{display:none}
       .hero{padding:58px 0}
     }
@@ -123,9 +133,9 @@
   <header class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="kicker">Student developer and robotics builder</div>
-        <h1>I build games, simulations, and robotics projects.</h1>
-        <p class="lead">I am a Burnsview Secondary student in the Dual Dogwood program. I like projects where code turns into something you can test, play with, or learn from - especially simulations, engineering tools, and robotics systems.</p>
+        <div class="kicker">Student developer - robotics builder - simulation designer</div>
+        <h1>I build practical software for games, simulations, and robotics.</h1>
+        <p class="lead">I am a Burnsview Secondary student in the Dual Dogwood program, focused on programming, physics, math, and engineering. I am looking for opportunities where I can learn from experienced teams while contributing strong problem-solving, fast iteration, and hands-on technical curiosity.</p>
         <div class="buttons">
           <a class="btn" href="web-projects/">View projects</a>
           <a class="btn secondary" href="resume.pdf">Download resume</a>
@@ -135,12 +145,12 @@
       </div>
 
       <aside class="card note">
-        <h2>Quick facts</h2>
-        <p>A short snapshot from my resume and projects.</p>
-        <div class="stat"><b>Python + Java</b><span>Main programming languages</span></div>
-        <div class="stat"><b>Robotics</b><span>VEX builder, drivetrain and mechanisms</span></div>
-        <div class="stat"><b>140+ youth</b><span>Supported through leadership programs</span></div>
-        <div class="stat"><b>Top 25%</b><span>Waterloo Pascal Contest Distinction</span></div>
+        <h2>Profile</h2>
+        <p>A student builder with a mix of software projects, robotics experience, and community leadership.</p>
+        <div class="stat"><b>Python + Java</b><span>Core programming foundation, with browser projects in JavaScript</span></div>
+        <div class="stat"><b>Robotics</b><span>VEX builder focused on drivetrain and scoring mechanisms</span></div>
+        <div class="stat"><b>Advanced STEM</b><span>Calculus, physics, and chemistry coursework with strong marks</span></div>
+        <div class="stat"><b>Leadership</b><span>Led youth programs and helped organize community events</span></div>
       </aside>
     </div>
   </header>
@@ -148,24 +158,24 @@
   <main>
     <section id="projects">
       <div class="wrap">
-        <h2>Projects</h2>
-        <p class="sub">These started as Python projects and experiments. I am also converting several of them into browser versions so people can try them without downloading anything.</p>
+        <h2>Selected projects</h2>
+        <p class="sub">These projects show how I approach problems: build a working version, test the mechanics, improve the interface, and keep iterating until the idea is usable.</p>
         <div class="grid projects">
           <article class="card project">
             <h3>Zero Signal</h3>
-            <p>A browser FPS game with maps, bots, weapons, grenades, and shotgun pellet effects.</p>
+            <p>A browser FPS game with map design, enemy behavior, weapon systems, grenades, and shotgun pellet effects.</p>
             <div class="tags"><span class="tag">Canvas</span><span class="tag">Game AI</span><span class="tag">FPS</span></div>
             <a href="web-projects/zero-signal/">Play Zero Signal</a>
           </article>
           <article class="card project">
             <h3>Battle Bot Simulator</h3>
-            <p>A robot battle game with modular parts, stats, AI behavior, and combat testing.</p>
+            <p>A robot battle game with modular parts, stat-based interactions, AI behavior, and combat testing.</p>
             <div class="tags"><span class="tag">Python</span><span class="tag">Pygame</span><span class="tag">Robotics</span></div>
             <a href="web-projects/battle-bot-simulator/">Open web version</a>
           </article>
           <article class="card project">
             <h3>Pandemic Simulator</h3>
-            <p>A world-spread simulation with virus traits, travel routes, country stats, and outbreak tracking.</p>
+            <p>A world-spread simulation with virus traits, travel routes, country statistics, and outbreak tracking.</p>
             <div class="tags"><span class="tag">Simulation</span><span class="tag">Data</span><span class="tag">Canvas</span></div>
             <a href="web-projects/pandemic-simulator/">Run simulation</a>
           </article>
@@ -195,7 +205,7 @@
       <div class="wrap grid two">
         <div>
           <h2>Experience</h2>
-          <p class="sub">I care about both building things and helping people learn.</p>
+          <p class="sub">I like work that combines technical building with teamwork, communication, and responsibility.</p>
           <div class="timeline">
             <div class="item">
               <div class="date">2025 - Present</div>
@@ -217,12 +227,23 @@
         <aside class="card">
           <h2>Education</h2>
           <p><strong>Burnsview Secondary School</strong><br>Dual Dogwood Diploma, French Immersion<br>September 2023 - June 2027</p>
-          <div class="tags">
-            <span class="tag">Calculus 12 - 100%</span>
-            <span class="tag">Physics 11 - 96%</span>
-            <span class="tag">Chemistry 11 - 97%</span>
-            <span class="tag">Honour Roll</span>
+          <div class="course-grid">
+            <div class="course"><b>100%</b><span>Calculus 12</span></div>
+            <div class="course"><b>96%</b><span>Physics 11</span></div>
+            <div class="course"><b>97%</b><span>Chemistry 11</span></div>
           </div>
+          <div class="tags">
+            <span class="tag">French Immersion</span>
+            <span class="tag">Dual Dogwood</span>
+            <span class="tag">Honour Roll</span>
+            <span class="tag">Waterloo Pascal Distinction</span>
+          </div>
+          <div class="edu-list">
+            <div class="edu-point"><strong>Academic focus</strong>Math, physics, chemistry, robotics, programming, and simulation systems.</div>
+            <div class="edu-point"><strong>Technical strengths</strong>Turning classroom concepts into working projects: circuits, graphing tools, disease-spread models, and robot simulations.</div>
+            <div class="edu-point"><strong>Communication</strong>Fluent in English, French, and Punjabi, with intermediate Hindi and Urdu.</div>
+          </div>
+          <p class="internship-note">Open to internships, mentorship, and student opportunities in software development, robotics, engineering, and simulation-focused teams.</p>
         </aside>
       </div>
     </section>
