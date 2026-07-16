@@ -65,7 +65,7 @@
       document.querySelectorAll("[data-v]").forEach(x=>x.onclick=()=>pick(x.dataset.v));
     }
     function pick(v){ if(!a)a=v; else if(!b)b=v; else{a=v;b=null} render(); }
-    function note(t){ $("log").innerHTML=`<div>${new Date().toLocaleTimeString()} — ${t}</div>`+$("log").innerHTML; }
+function note(t){ $("log").innerHTML=`<div>${new Date().toLocaleTimeString()} | ${t}</div>`+$("log").innerHTML; }
     $("mix").onclick=()=>{ if(!a||!b)return; const made=recipes[key(a,b)]; if(made){ const fresh=!known.has(made); known.add(made); localStorage.chemKnown=JSON.stringify([...known]); $("result").innerHTML=`${fresh?"New discovery":"Already known"}: <b>${made}</b>`; note(`${a} + ${b} → ${made}`); } else { $("result").innerHTML=`<span style="color:var(--bad)">No reaction.</span>`; note(`${a} + ${b} fizzled out`); } a=b=null; render(); };
     $("clear").onclick=()=>{a=b=null;render();$("result").textContent=""};
     $("hint").onclick=()=>{ const missing=Object.entries(recipes).find(([,v])=>!known.has(v)); $("result").textContent=missing?`Hint: try ingredients that could make ${missing[1]}.`:"You found every recipe in this version."; };
