@@ -1,45 +1,116 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ganeev's Projects</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projects — Ganeev Mujral</title>
+  <meta name="description" content="Playable browser games, simulations, and tools by Ganeev Mujral.">
+  <meta name="theme-color" content="#f3f0e9">
   <style>
-    :root{--bg:#0b111c;--panel:#121b2b;--text:#f4f6fb;--muted:#a9b4c7;--accent:#7dd3fc;--line:#28364f}
+    :root {
+      --paper:#f3f0e9;
+      --ink:#171a17;
+      --muted:#62685f;
+      --line:#c9c5bb;
+      --green:#1f5a46;
+      --rust:#bd5b38;
+      --white:#fffdfa;
+      --serif:Georgia,"Times New Roman",serif;
+      --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+      --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#0b111c;color:var(--text);line-height:1.6}
-    .wrap{width:min(1080px,calc(100% - 40px));margin:0 auto}
-    header{padding:70px 0 34px}
-    .back{color:var(--muted);text-decoration:none;font-weight:700}
-    .back:hover{color:var(--accent)}
-    .kicker{margin-top:30px;color:var(--accent);font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-    h1{font-size:clamp(40px,7vw,68px);line-height:1.04;margin:12px 0 14px;letter-spacing:-.045em}
-    .lead{max-width:760px;color:#d8e1f1;font-size:19px;margin:0}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding:28px 0 70px}
-    .card{background:linear-gradient(180deg,#172235,#121b2b);border:1px solid var(--line);border-radius:20px;padding:22px;min-height:220px;box-shadow:0 18px 45px rgba(0,0,0,.22)}
-    .card h2{margin:0 0 10px;font-size:24px}
-    .card p{color:var(--muted);margin:0;min-height:76px}
-    .tags{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 14px}
-    .tag{font-size:12px;font-weight:750;color:#dce8f8;border:1px solid var(--line);background:rgba(255,255,255,.04);padding:6px 9px;border-radius:999px}
-    .play{display:inline-block;text-decoration:none;color:#0b111c;background:#eef4ff;border-radius:12px;padding:10px 13px;font-weight:800}
-    .play:hover{background:var(--accent)}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6}
+    img{display:block;max-width:100%}
+    a{color:inherit}
+    :focus-visible{outline:3px solid var(--rust);outline-offset:4px}
+    .shell{width:min(1180px,calc(100% - 48px));margin-inline:auto}
+    nav{border-bottom:1px solid var(--line)}
+    .nav-inner{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{font-weight:750;text-decoration:none}
+    .back{color:var(--green);font-size:14px;font-weight:700;text-underline-offset:4px}
+    header{padding:88px 0 72px;border-bottom:1px solid var(--line)}
+    .eyebrow{margin:0 0 20px;color:var(--rust);font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    h1{max-width:900px;margin:0;font-family:var(--serif);font-size:clamp(50px,8vw,88px);font-weight:400;letter-spacing:-.055em;line-height:.98}
+    .lead{max-width:720px;margin:28px 0 0;color:var(--muted);font-size:19px}
+    main{padding:82px 0 100px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px 30px}
+    article{min-width:0}
+    figure{margin:0 0 20px;border:1px solid var(--line);background:#11151a;overflow:hidden}
+    figure img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center top;transition:transform .3s ease}
+    article:hover figure img{transform:scale(1.02)}
+    .meta{color:var(--rust);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    h2{margin:7px 0 10px;font-family:var(--serif);font-size:34px;font-weight:400;letter-spacing:-.035em}
+    article p{margin:0;color:var(--muted)}
+    .links{display:flex;flex-wrap:wrap;gap:22px;margin-top:17px}
+    .links a{color:var(--green);font-size:14px;font-weight:750;text-underline-offset:5px}
+    .links a:hover{color:var(--rust)}
+    footer{padding:28px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+    @media(max-width:760px){.shell{width:min(100% - 28px,1180px)}header{padding:64px 0 54px}.grid{grid-template-columns:1fr;gap:50px}main{padding:62px 0 76px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:.01ms!important}}
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <a class="back" href="../">Back to portfolio</a>
-    <div class="kicker">Playable web projects</div>
-    <h1>Projects you can try in the browser.</h1>
-    <p class="lead">These are web versions of my games and simulations. Some are full browser games, and some are still being converted from the original Python versions.</p>
+  <nav aria-label="Project navigation">
+    <div class="shell nav-inner">
+      <a class="brand" href="../index.html">Ganeev Mujral</a>
+      <a class="back" href="../index.html">← Back to portfolio</a>
+    </div>
+  </nav>
+  <header>
+    <div class="shell">
+      <p class="eyebrow">Playable work · six projects</p>
+      <h1>Games, simulations, and tools for the browser.</h1>
+      <p class="lead">These projects began as Python experiments, school ideas, and game-design questions. Every web version below runs directly in the browser.</p>
+    </div>
   </header>
-
-  <main class="wrap grid">
-    <section class="card"><h2>Zero Signal</h2><p>A browser FPS game with bots, maps, weapons, grenades, and shotgun effects.</p><div class="tags"><span class="tag">Canvas</span><span class="tag">FPS</span><span class="tag">AI</span></div><a class="play" href="zero-signal/">Play</a></section>
-    <section class="card"><h2>Chem Lab</h2><p>Combine elements and unlock new discoveries in a chemistry-inspired game.</p><div class="tags"><span class="tag">Chemistry</span><span class="tag">Puzzle</span></div><a class="play" href="alchemy/">Open</a></section>
-    <section class="card"><h2>Battle Bot Simulator</h2><p>Build robot fighters from modular parts, then battle against AI or a second player.</p><div class="tags"><span class="tag">Robotics</span><span class="tag">Combat</span></div><a class="play" href="battle-bot-simulator/">Start</a></section>
-    <section class="card"><h2>Circuit Simulator</h2><p>Place batteries, wires, bulbs, switches, and resistors to test simple circuits.</p><div class="tags"><span class="tag">Physics</span><span class="tag">Circuits</span></div><a class="play" href="circuit-simulator/">Build</a></section>
-    <section class="card"><h2>Graphing Calculator</h2><p>Plot mathematical functions with a simple browser-based graphing tool.</p><div class="tags"><span class="tag">Math</span><span class="tag">Functions</span></div><a class="play" href="graphing-calculator/">Open</a></section>
-    <section class="card"><h2>Pandemic Simulator</h2><p>Build a virus, choose travel routes, and watch outbreaks move across a world map.</p><div class="tags"><span class="tag">Simulation</span><span class="tag">World map</span></div><a class="play" href="pandemic-simulator/">Run</a></section>
+  <main>
+    <div class="shell grid">
+      <article>
+        <figure><img src="../assets/projects/zero-signal.png" width="1280" height="720" alt="Zero Signal operator and weapon loadout screen"></figure>
+        <span class="meta">Browser FPS · JavaScript</span>
+        <h2>Zero Signal</h2>
+        <p>Fight nine bots across distinct maps using multiple weapon classes, grenades, and a complete first-person HUD.</p>
+        <div class="links"><a href="zero-signal/index.html">Play project ↗</a><a href="https://github.com/GaneevM/Zero-Signal" target="_blank" rel="noopener">Source ↗</a></div>
+      </article>
+      <article>
+        <figure><img src="../assets/projects/pandemic-simulator.png" width="1280" height="720" alt="Pandemic Simulator map with outbreak hotspots and statistics" loading="lazy"></figure>
+        <span class="meta">World simulation · Canvas</span>
+        <h2>Pandemic Simulator</h2>
+        <p>Choose a virus profile and starting country, then track spread through borders, flights, and boats.</p>
+        <div class="links"><a href="pandemic-simulator/index.html">Run simulation ↗</a><a href="https://github.com/GaneevM/My-projects/blob/main/pandemicsim.py" target="_blank" rel="noopener">Python source ↗</a></div>
+      </article>
+      <article>
+        <figure><img src="../assets/projects/battle-bot-simulator.png" width="1280" height="720" alt="Battle Bot Simulator modular robot builder" loading="lazy"></figure>
+        <span class="meta">Robotics game · Python/Pygame</span>
+        <h2>Battle Bot Simulator</h2>
+        <p>Build a robot from modular parts and test how each choice changes its behavior in combat.</p>
+        <div class="links"><a href="battle-bot-simulator/index.html">Play project ↗</a><a href="https://github.com/GaneevM/My-projects/blob/main/battlebotsim.py" target="_blank" rel="noopener">Source ↗</a></div>
+      </article>
+      <article>
+        <figure><img src="../assets/projects/chem-lab.png" width="1280" height="720" alt="Chem Lab Alchemy discovery workbench" loading="lazy"></figure>
+        <span class="meta">Chemistry puzzle · Web game</span>
+        <h2>Chem Lab Alchemy</h2>
+        <p>Combine elements, follow clues, and uncover increasingly complex materials.</p>
+        <div class="links"><a href="alchemy/index.html">Play project ↗</a><a href="https://github.com/GaneevM/My-projects/blob/main/alchemy.py" target="_blank" rel="noopener">Source ↗</a></div>
+      </article>
+      <article>
+        <figure><img src="../assets/projects/circuit-simulator.png" width="1280" height="720" alt="Circuit Simulator with a battery, wire, and bulb" loading="lazy"></figure>
+        <span class="meta">Physics tool · Interactive grid</span>
+        <h2>Circuit Simulator</h2>
+        <p>Place batteries, wires, switches, resistors, and bulbs, then test the circuit.</p>
+        <div class="links"><a href="circuit-simulator/index.html">Build circuit ↗</a><a href="https://github.com/GaneevM/My-projects/blob/main/circuitsim.py" target="_blank" rel="noopener">Source ↗</a></div>
+      </article>
+      <article>
+        <figure><img src="../assets/projects/graphing-calculator.png" width="1280" height="720" alt="Graphing Calculator plotting a sine function" loading="lazy"></figure>
+        <span class="meta">Math tool · Function parser</span>
+        <h2>Graphing Calculator</h2>
+        <p>Enter equations, adjust the range, and plot mathematical functions on a browser canvas.</p>
+        <div class="links"><a href="graphing-calculator/index.html">Open calculator ↗</a><a href="https://github.com/GaneevM/My-projects/blob/main/graphingcalculator.py" target="_blank" rel="noopener">Source ↗</a></div>
+      </article>
+    </div>
   </main>
+  <footer><div class="shell">Designed and built by Ganeev Mujral.</div></footer>
 </body>
 </html>
