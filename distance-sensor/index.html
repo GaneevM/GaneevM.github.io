@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monitor-distance sensor | Ganeev Mujral</title>
+  <meta name="description" content="A personal monitor-distance sensor prototype built and tested by Ganeev Mujral.">
+  <meta name="theme-color" content="#f7f6f2">
+  <link rel="canonical" href="https://ganeevm.github.io/distance-sensor/">
+  <link rel="stylesheet" href="../assets/portfolio.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav class="site-nav" aria-label="Project navigation">
+    <div class="shell nav-inner">
+      <a class="brand" href="../">Ganeev Mujral</a>
+      <div class="page-nav"><a href="../#work">Back to projects</a><a href="../games/">Games</a><a href="../robotics/">Robotics</a></div>
+    </div>
+  </nav>
+  <main id="main">
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">Personal engineering project · Distance reminder</p>
+        <div class="hero-grid">
+          <div>
+            <h1>A small reminder to sit back from the screen.</h1>
+          </div>
+          <div class="hero-copy">
+            <p>I built a motion-distance sensor that flashes an LED when someone moves too close to a monitor. It is a simple prototype, but the reason I built it is personal.</p>
+          </div>
+        </div>
+        <div class="intro">
+          <h2>Turning a problem I noticed in myself into something I could test.</h2>
+          <div class="sensor-story">
+            <p>I have dealt with poor eyesight and astigmatism, and for a long time I did not fully understand how much my screen habits were part of the problem. Gaming made that harder: when I was focused on a game, I could stay close to the monitor for much longer than I meant to.</p>
+            <p>Instead of treating that as something I just had to remember, I decided to build a reminder. An ultrasonic distance sensor measures how close the user is to the screen. When the distance becomes too small, the circuit turns on a bright LED. The goal is not to diagnose or treat an eye condition; it is to make a good habit visible at the moment it matters.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="build-heading">
+      <div class="shell">
+        <header class="section-heading">
+          <div><span class="section-number">01 / The prototype</span><h2 id="build-heading">From wiring to a working reminder.</h2></div>
+          <p class="section-lead">I connected the sensor to a microcontroller and breadboard circuit, then tuned the distance threshold and alert response through repeated tests.</p>
+        </header>
+        <div class="sensor-photos">
+          <figure><img src="../assets/sensor/prototype-board.png" width="1179" height="2556" alt="Microcontroller, ultrasonic distance sensor, and breadboard circuit beside a laptop"></figure>
+          <figure><img src="../assets/sensor/prototype-alert.png" width="1179" height="2556" alt="Prototype circuit with the green alert LED illuminated beside a monitor"></figure>
+        </div>
+        <div class="steps">
+          <article><h3>Measure</h3><p>The ultrasonic sensor checks the distance between the user and the screen.</p></article>
+          <article><h3>Decide</h3><p>The microcontroller compares the reading with the distance threshold.</p></article>
+          <article><h3>Remind</h3><p>The LED gives a clear visual cue to move back and reset the habit.</p></article>
+        </div>
+        <p class="note">This is an educational prototype and personal reminder, not a medical device or a substitute for professional eye care.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="test-heading">
+      <div class="shell">
+        <header class="section-heading">
+          <div><span class="section-number">02 / Testing</span><h2 id="test-heading">Testing the response.</h2></div>
+          <p class="section-lead">These short clips show the prototype running through two setups while I checked the sensor reading and alert light.</p>
+        </header>
+        <div class="sensor-videos">
+          <figure><video controls playsinline preload="metadata"><source src="../assets/sensor/test-1.mp4" type="video/mp4">Your browser does not support embedded video.</video><figcaption>Prototype test 01 · distance reading and alert circuit.</figcaption></figure>
+          <figure><video controls playsinline preload="metadata"><source src="../assets/sensor/test-2.mp4" type="video/mp4">Your browser does not support embedded video.</video><figcaption>Prototype test 02 · sensor and LED response.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="lesson-heading">
+      <div class="shell profile-grid">
+        <div><span class="section-number">03 / What I learned</span><h2 id="lesson-heading">Engineering is useful when it meets a real need.</h2></div>
+        <div>
+          <p>This project taught me to break a personal problem into measurable parts: choose a sensor, set a threshold, create feedback, test it, and improve the result. It also changed the way I think about engineering. A project does not need to be complicated to matter; sometimes the most useful design is a small, well-timed reminder that helps someone change what they are doing.</p>
+          <div class="text-links"><a class="text-link" href="../resume.pdf?v=20260920-its">View my resume ↗</a><a class="text-link" href="../#contact">Get in touch ↗</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="shell footer-inner"><span>Ganeev Mujral</span><a href="../">Back to portfolio ↑</a></div></footer>
+</body>
+</html>
