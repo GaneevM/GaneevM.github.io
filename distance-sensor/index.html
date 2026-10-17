@@ -8,6 +8,8 @@
   <meta name="theme-color" content="#f7f6f2">
   <link rel="canonical" href="https://ganeevm.github.io/distance-sensor/">
   <link rel="stylesheet" href="../assets/portfolio.css">
+  <link rel="stylesheet" href="../assets/refined.css?v=20261017">
+  <script src="../assets/portfolio.js?v=20261017" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -23,17 +25,18 @@
         <p class="eyebrow">Personal engineering project · Distance reminder</p>
         <div class="hero-grid">
           <div>
-            <h1>A small reminder to sit back from the screen.</h1>
+            <h1>A nudge to sit back.</h1>
           </div>
           <div class="hero-copy">
-            <p>I built a motion-distance sensor that flashes an LED when someone moves too close to a monitor. It is a simple prototype, but the reason I built it is personal.</p>
+            <p>I wired an ultrasonic sensor to a microcontroller and an LED. When the distance drops below a set threshold, the light turns on.</p>
           </div>
         </div>
+        <div class="project-meta"><span>My role: design, wiring &amp; testing</span><span>Ultrasonic sensor + microcontroller</span><span>Status: working prototype</span></div>
         <div class="intro">
-          <h2>Turning a problem I noticed in myself into something I could test.</h2>
+          <h2>Why I built it.</h2>
           <div class="sensor-story">
-            <p>I have dealt with poor eyesight and astigmatism, and for a long time I did not fully understand how my screen habits affected my comfort or how to build better habits around them. Gaming made that harder: when I was focused on a game, I could stay close to the monitor for much longer than I meant to.</p>
-            <p>Instead of treating that as something I just had to remember, I decided to build a reminder. An ultrasonic distance sensor measures how close the user is to the screen. When the distance becomes too small, the circuit turns on a bright LED. The goal is not to diagnose or treat an eye condition; it is to make a good habit visible at the moment it matters.</p>
+            <p>I have poor eyesight and astigmatism, and I like gaming. When I’m concentrating, I tend to lean towards the monitor without noticing. I wanted a reminder I wouldn’t have to keep thinking about.</p>
+            <p>The prototype measures distance and switches on an LED when I get too close. I built it as a personal habit reminder. It doesn’t measure eye health or treat a condition.</p>
           </div>
         </div>
       </div>
@@ -73,10 +76,10 @@
 
     <section class="section" aria-labelledby="lesson-heading">
       <div class="shell profile-grid">
-        <div><span class="section-number">03 / What I learned</span><h2 id="lesson-heading">Engineering is useful when it meets a real need.</h2></div>
+        <div><span class="section-number">03 / What I learned</span><h2 id="lesson-heading">What I’d test next.</h2></div>
         <div>
-          <p>This project taught me to break a personal problem into measurable parts: choose a sensor, set a threshold, create feedback, test it, and improve the result. It also changed the way I think about engineering. A project does not need to be complicated to matter; sometimes the most useful design is a small, well-timed reminder that helps someone change what they are doing.</p>
-          <div class="text-links"><a class="text-link" href="../resume.pdf?v=20260920-its">View my resume ↗</a><a class="text-link" href="../#contact">Get in touch ↗</a></div>
+          <p>The circuit responds to distance changes in the test clips above. My next step would be to record readings against measured distances, check different seating angles, and find out whether brief movements trigger unnecessary alerts. I’d also like to move it off the breadboard and into a small monitor mount.</p>
+          <div class="text-links"><a class="text-link" href="../resume.pdf?v=20261010-hackcamp">View my resume ↗</a><a class="text-link" href="../#contact">Get in touch ↗</a></div>
         </div>
       </div>
     </section>
